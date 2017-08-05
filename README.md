@@ -32,23 +32,21 @@ Be prepared to do hard-reset!
 
 1. Create Makefile.  The configure script generates Makefile for libusb support
    by default:
-
    ```
    ./configure --prefix=$HOME
    ```
-   
 2. Build the library and test programs:
-```
+   ```
    make
-```
+   ```
 3. Install programs under $HOME/bin (${prefix}/bin):
-
+   ```
    make install
-
+   ```
 4. Edit $HOME/.dlusbrc
 
 Now you have libdlusb.a and several test programs.  If you want a shared
-library, add --enable-shared option to configure (./configure --enable-shared)
+library, add `--enable-shared` option to configure (`./configure --enable-shared`)
 and run make.
 
 NOTE: Under *BSD, install the libusb port from /usr/ports/devel/libusb and
@@ -61,43 +59,43 @@ This applies only to *BSD.
 
 1. As root, you need to add the following lines into the kernel config
    (/usr/src/sys/i386/conf/MYKERNEL) to support USB and HID:
-
+   ```
    device	uhci
    device	ohci
    device	ehci
    device	usb
    device	ugen
    device	uhid
-
+   ```
 2. Recompile the kernel and reboot:
-
+   ```
    cd /usr/src
    make kernel KERNCONF=MYKERNEL
    reboot
-
+   ```
 3. Configure libdlusb with usbhid support:
-
+   ```
    ./configure --with-usbhid --prefix=$HOME
-
+   ```
 4. Build the library and test programs:
-
+   ```
    make
-
+   ```
 5. Install programs under $HOME/bin (${prefix}/bin):
-
+   ```
    make install
-
+   ```
 6. Edit $HOME/.dlusbrc
 
 7. Use /dev/uhid0 for the device file.  If it doesn't work, you can see which
    file is linked with the watch by tailing /var/log/message while
-   attaching/detaching the watch (tail -f /var/log/message).
+   attaching/detaching the watch (`tail -f /var/log/message`).
 
-That's it!  Add --enable-shared option to configure (./configure --with-usbhid
---enable-shared) to build a shared library.
+That's it!  Add `--enable-shared` option to configure (`./configure --with-usbhid
+--enable-shared`) to build a shared library.
 
 NOTE: When you switch between the two USB libraries, make sure to delete an old
-library (make clean; rm -f libdlusb.*; ./configure ...).
+library (`make clean; rm -f libdlusb.*; ./configure ...`).
 
 
 ### BUG REPORT
