@@ -98,7 +98,7 @@ NOTE: When you switch between the two USB libraries, make sure to delete an old
 library (`make clean; rm -f libdlusb.*; ./configure ...`).
 
 
-### BUG REPORT
+## BUG REPORT
 
 If you find a bug or write a useful program with the library, please let me
 know: http://groups.yahoo.com/group/timexdatalinkusbdevelop
