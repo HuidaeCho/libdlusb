@@ -1,0 +1,205 @@
+# $Id: Makefile.in,v 1.22 2010/01/05 09:24:02 geni Exp $
+#
+# Copyright (c) 2005 Huidae Cho
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+
+OBJS=session.o tucp.o comm.o misc.o memory.o \
+     contact.o note.o appt.o schedule.o occasion.o chrono.o timer.o \
+     trainer.o
+
+# install directory
+PREFIX=@prefix@
+
+# use the libusb 0.1.12 library
+@LIBUSB@OBJS+=usb_libusb.o
+@LIBUSB@CFLAGS+=-Wall -DUSB_LIBUSB `libusb-config --cflags`
+@LIBUSB@LIBS=`libusb-config --libs`
+# use the libusb 1.0 library
+@LIBUSB_1_0@OBJS+=usb_libusb-1.0.o
+@LIBUSB_1_0@CFLAGS+=-Wall -DUSB_LIBUSB_1_0 `pkg-config libusb-1.0 --cflags`
+@LIBUSB_1_0@LIBS=`pkg-config libusb-1.0 --libs`
+# use the usbhid library
+@USBHID@OBJS+=usb_usbhid.o
+@USBHID@CFLAGS+=-Wall -DUSB_USBHID
+@USBHID@LIBS=-lusbhid
+
+# build the static library
+@STATIC@LIBS+=libdlusb.a
+# build the shared library
+@SHARED@LIBS+=-L. -ldlusb
+
+TARGETS=sysinfo_dlusb init_dlusb lock_dlusb dump_dlusb load_dlusb \
+	tod_dlusb option_dlusb \
+	print_contact add_contact del_contact \
+	print_note add_note del_note unused_note \
+	print_appt add_appt del_appt unused_appt \
+	print_alarm add_alarm del_alarm \
+	print_schedule add_schedule del_schedule \
+	print_occasion add_occasion del_occasion \
+	print_chrono add_chrono del_chrono unused_chrono \
+	print_countdn add_countdn del_countdn \
+	print_interval add_interval del_interval \
+	print_chrono_report export_chrono_csv
+
+all: @LIBDLUSB@ $(TARGETS)
+
+clean:
+	rm -f *.o
+
+install: all
+	@test -d $(PREFIX)/bin || mkdir -p $(PREFIX)/bin
+	@cp -v $(TARGETS) *.sh $(PREFIX)/bin
+	@test -f $(HOME)/.dlusbrc || cp dlusbrc $(HOME)/.dlusbrc
+	@echo
+	@echo "Don't forget to edit ~/.dlusbrc!"
+	@echo
+
+# build the static library
+@STATIC@libdlusb.a: $(OBJS)
+@STATIC@	rm -f libdlusb.a
+@STATIC@	$(AR) r libdlusb.a $(OBJS)
+
+# build the shared library
+@SHARED@CFLAGS+=-fpic
+@SHARED@#CFLAGS+=-fPIC # for large libraries
+@SHARED@libdlusb.so: $(OBJS)
+@SHARED@	$(CC) -Wall -shared -o libdlusb.so $(OBJS)
+
+sysinfo_dlusb: sysinfo_dlusb.o @LIBDLUSB@
+	$(CC) -Wall -o sysinfo_dlusb sysinfo_dlusb.o $(LIBS)
+
+init_dlusb: init_dlusb.o @LIBDLUSB@
+	$(CC) -Wall -o init_dlusb init_dlusb.o $(LIBS)
+
+lock_dlusb: lock_dlusb.o @LIBDLUSB@
+	$(CC) -Wall -o lock_dlusb lock_dlusb.o $(LIBS)
+
+dump_dlusb: dump_dlusb.o @LIBDLUSB@
+	$(CC) -Wall -o dump_dlusb dump_dlusb.o $(LIBS)
+
+load_dlusb: load_dlusb.o @LIBDLUSB@
+	$(CC) -Wall -o load_dlusb load_dlusb.o $(LIBS)
+
+tod_dlusb: tod_dlusb.o @LIBDLUSB@
+	$(CC) -Wall -o tod_dlusb tod_dlusb.o $(LIBS)
+
+option_dlusb: option_dlusb.o @LIBDLUSB@
+	$(CC) -Wall -o option_dlusb option_dlusb.o $(LIBS)
+
+print_contact: print_contact.o @LIBDLUSB@
+	$(CC) -Wall -o print_contact print_contact.o $(LIBS)
+
+add_contact: add_contact.o @LIBDLUSB@
+	$(CC) -Wall -o add_contact add_contact.o $(LIBS)
+
+del_contact: del_contact.o @LIBDLUSB@
+	$(CC) -Wall -o del_contact del_contact.o $(LIBS)
+
+print_note: print_note.o @LIBDLUSB@
+	$(CC) -Wall -o print_note print_note.o $(LIBS)
+
+add_note: add_note.o @LIBDLUSB@
+	$(CC) -Wall -o add_note add_note.o $(LIBS)
+
+del_note: del_note.o @LIBDLUSB@
+	$(CC) -Wall -o del_note del_note.o $(LIBS)
+
+unused_note: unused_note.o libdlusb.a
+	$(CC) -Wall -o unused_note unused_note.o $(LIBS)
+
+print_appt: print_appt.o @LIBDLUSB@
+	$(CC) -Wall -o print_appt print_appt.o $(LIBS)
+
+add_appt: add_appt.o @LIBDLUSB@
+	$(CC) -Wall -o add_appt add_appt.o $(LIBS)
+
+del_appt: del_appt.o @LIBDLUSB@
+	$(CC) -Wall -o del_appt del_appt.o $(LIBS)
+
+unused_appt: unused_appt.o libdlusb.a
+	$(CC) -Wall -o unused_appt unused_appt.o $(LIBS)
+
+print_alarm: print_appt
+	cp print_appt print_alarm
+
+add_alarm: add_appt
+	cp add_appt add_alarm
+
+del_alarm: del_appt
+	cp del_appt del_alarm
+
+print_schedule: print_schedule.o @LIBDLUSB@
+	$(CC) -Wall -o print_schedule print_schedule.o $(LIBS)
+
+add_schedule: add_schedule.o @LIBDLUSB@
+	$(CC) -Wall -o add_schedule add_schedule.o $(LIBS)
+
+del_schedule: del_schedule.o @LIBDLUSB@
+	$(CC) -Wall -o del_schedule del_schedule.o $(LIBS)
+
+print_occasion: print_occasion.o @LIBDLUSB@
+	$(CC) -Wall -o print_occasion print_occasion.o $(LIBS)
+
+add_occasion: add_occasion.o @LIBDLUSB@
+	$(CC) -Wall -o add_occasion add_occasion.o $(LIBS)
+
+del_occasion: del_occasion.o @LIBDLUSB@
+	$(CC) -Wall -o del_occasion del_occasion.o $(LIBS)
+
+print_chrono: print_chrono.o @LIBDLUSB@
+	$(CC) -Wall -o print_chrono print_chrono.o $(LIBS)
+
+add_chrono: add_chrono.o @LIBDLUSB@
+	$(CC) -Wall -o add_chrono add_chrono.o $(LIBS)
+
+del_chrono: del_chrono.o @LIBDLUSB@
+	$(CC) -Wall -o del_chrono del_chrono.o $(LIBS)
+
+unused_chrono: unused_chrono.o libdlusb.a
+	$(CC) -Wall -o unused_chrono unused_chrono.o $(LIBS)
+
+print_countdn: print_countdn.o libdlusb.a
+	$(CC) -Wall -o print_countdn print_countdn.o $(LIBS)
+
+add_countdn: add_countdn.o libdlusb.a
+	$(CC) -Wall -o add_countdn add_countdn.o $(LIBS)
+
+del_countdn: del_countdn.o libdlusb.a
+	$(CC) -Wall -o del_countdn del_countdn.o $(LIBS)
+
+print_interval: print_countdn
+	cp print_countdn print_interval
+
+add_interval: add_countdn
+	cp add_countdn add_interval
+
+del_interval: del_countdn
+	cp del_countdn del_interval
+
+# Michael Stone. May 11, 2009
+print_chrono_report: print_chrono_report.o libdlusb.a
+	$(CC) -Wall -o print_chrono_report print_chrono_report.o $(LIBS)
+
+export_chrono_csv: export_chrono_csv.o libdlusb.a
+	$(CC) -Wall -o export_chrono_csv export_chrono_csv.o $(LIBS)
