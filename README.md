@@ -1,14 +1,6 @@
-# $Id: README,v 1.11 2005/11/21 06:41:21 geni Exp $
+$Id: README,v 1.11 2005/11/21 06:41:21 geni Exp $
 
-= DISCLAIMER
-
-This software can cause severe damage to your Timex Data Link USB watch.  Use
-at your own risk.
-
-Be prepared to do hard-reset!
-
-
-= INTRODUCTION
+# libdlusb
 
 libdlusb is a library used to communicate with the Timex Data Link USB watch on
 various UN*X operating systems.  The library can be built with two USB
@@ -19,12 +11,20 @@ The communication protocol was implemented based on "Data Link USB
 Communication Protocol and Database Design Guide," which is distributed by
 Timex Corporation.
 
-Homepage: http://geni.ath.cx/libdlusb.html
+Homepage: https://oldgeni.isnew.info/libdlusb.html
 
 
-= COMPILATION
+## DISCLAIMER
 
- = libusb
+This software can cause severe damage to your Timex Data Link USB watch.  Use
+at your own risk.
+
+Be prepared to do hard-reset!
+
+
+## COMPILATION
+
+### libusb
 
 1. Create Makefile.  The configure script generates Makefile for libusb support
    by default:
@@ -49,7 +49,7 @@ NOTE: Under *BSD, install the libusb port from /usr/ports/devel/libusb and
 unload the uhid kernel module or disable it from the kernel config.
 
 
- = usbhid
+### usbhid
 
 This applies only to *BSD.
 
@@ -94,7 +94,7 @@ NOTE: When you switch between the two USB libraries, make sure to delete an old
 library (make clean; rm -f libdlusb.*; ./configure ...).
 
 
-= BUG REPORT
+### BUG REPORT
 
 If you find a bug or write a useful program with the library, please let me
 know: http://groups.yahoo.com/group/timexdatalinkusbdevelop
