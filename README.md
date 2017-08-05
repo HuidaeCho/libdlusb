@@ -1,5 +1,5 @@
 I developed this UN*X library back in 2005 when I was using the Timex Data Link USB watch to transfer data between my laptop and watch. I do not maintain this library anymore since my watch broke a while ago. There were two projects forked from this library: [wxDatalinkUSB](http://wxdlusb.sourceforge.net) (wxWidgets GUI for this library) and [libdlusb-0.0.9-mac
-](https://github.com/trishume/libdlusb-0.0.9-mac) (a port for Mac OS). This Git repository was imported from the latest version in my local CVS repository.
+](https://github.com/trishume/libdlusb-0.0.9-mac) (a port for Mac OS). This Git repository was imported from the latest version in my local CVS repository for archiving purposes.
 
 
 $Id: README,v 1.11 2005/11/21 06:41:21 geni Exp $
@@ -33,12 +33,14 @@ Be prepared to do hard-reset!
 1. Create Makefile.  The configure script generates Makefile for libusb support
    by default:
 
+   ```
    ./configure --prefix=$HOME
-
+   ```
+   
 2. Build the library and test programs:
-
+```
    make
-
+```
 3. Install programs under $HOME/bin (${prefix}/bin):
 
    make install
